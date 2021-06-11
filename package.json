@@ -1,6 +1,14 @@
 {
   "name": "create-file-worker",
   "version": "1.0.0",
+  "description": "Create files using web worker.",
+  "keywords": [
+    "web worker",
+    "create file",
+    "excel",
+    "zip",
+    "export"
+  ],
   "main": "dist/index.js",
   "files": [
     "src",
@@ -10,12 +18,12 @@
     "start": "ts-node src/index.ts",
     "test": "jest",
     "nodemon": "nodemon",
-    "build": "tsc",
+    "build": "tsc & node copy.js",
     "eslint": "eslint",
     "prettier": "prettier"
   },
   "repository": "https://github.com/4074/create-file-worker.git",
-  "author": "小峰 <dwfn3398@corp.netease.com>",
+  "author": "4074 <win.ten.in@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^26.0.23",
@@ -30,5 +38,9 @@
     "ts-node": "^10.0.0",
     "typescript": "^4.3.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "iconv-lite": "^0.6.3",
+    "jszip": "^3.6.0",
+    "xlsx": "^0.17.0"
+  }
 }
