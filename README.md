@@ -4,7 +4,21 @@
 [![build status][travis-image]][travis-url]
 [![coverage][codecov-image]][codecov-url]
 
-Create file with web worker, supports `xlsx` and `zip` file. Then, you can save files in main thread.
+Create file with web worker, supports `xlsx` and `zip` file.
+
+Advantages:
+
+- The create file processing will not block the page rendering. It is useful for big file.
+- The code of `xlsx`/`zip` will bundle in the worker chunk, which will be loaded async.
+
+Browser Compatibility:
+
+- Chrome >= 4
+- Edge >= 12
+- Firefox >= 3.5
+- Internet Explorer >= 10
+
+https://developer.mozilla.org/zh-CN/docs/Web/API/Worker
 
 ## Install
 
@@ -24,6 +38,7 @@ import CreateFileWorker from 'create-file-worker'
 
 const worker = new CreateFileWorker()
 
+// Listen the `success` event, and save it to user file system in main thread.
 worker.onmessage = ({ data }) => {
   const { type, payload } = data
   if (type === 'cfw:success') {
@@ -34,14 +49,37 @@ worker.onmessage = ({ data }) => {
   }
 }
 
+// Pass data to worker.
 worker.postMessage({type: 'cfw:create', payload: {
   type: 'xlsx',
   name: 'example.xlsx',
   data: [{name: 'sheet1', [['1', '2'], ['a', 'b']]}]
 }})
+
+// Close the worker, maybe before component unmount.
+worker.terminate()
 ```
 
-Should using worker for this package.
+You must use worker loader for this package.
+
+1. Install `work-loader`.
+2. Change your config file.
+
+For webpack config:
+
+```js
+// webpack.config.js
+{
+//...
+  rules: [
+    test: /\.worker.(j|t)s$/,
+    loader: 'worker-loader',
+  ]
+//...
+}
+```
+
+For create-react-app, using craco:
 
 ```js
 // craco.config.js
@@ -51,15 +89,10 @@ module.exports = {
   },
   webpack: {
     configure: (source) => {
-      const arr = source.module.rules[1].oneOf
-      const workerReg = /create-file-worker\\dist\\index.js/
-
-      const workerRule = {
-        test: workerReg,
-        loader: require.resolve('worker-loader'),
-      }
-
-      arr.unshift(workerRule)
+      source.module.rules[1].oneOf.unshift({
+        test: /\.worker.(j|t)s$/,
+        loader: 'worker-loader',
+      })
       return source
     },
   },

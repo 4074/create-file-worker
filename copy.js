@@ -14,5 +14,5 @@ export default function create(source: FileItem | FileItem[]): Promise<{
 `
 
 const source = fs.readFileSync(path.join(__dirname, 'types.d.ts')).toString()
-fs.writeFileSync(path.join(__dirname, './dist/index.d.ts'), source + '\n' + index)
+fs.writeFileSync(path.join(__dirname, './dist/index.worker.d.ts'), source + '\n' + index)
 fs.writeFileSync(path.join(__dirname, './dist/create.d.ts'), source + '\n' + create)
